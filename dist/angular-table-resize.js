@@ -1,6 +1,6 @@
 angular.module("rzTable", []);
 
-angular.module("rzTable").directive('rzTable', ['resizeStorage', '$injector', '$parse', function(resizeStorage, $injector, $parse) {
+angular.module("rzTable").directive('rzTable', ['resizeStorage', '$injector', '$parse', '$timeout', function(resizeStorage, $injector, $parse, $timeout) {
 
     var mode;
     var saveTableSizes;
@@ -37,17 +37,19 @@ angular.module("rzTable").directive('rzTable', ['resizeStorage', '$injector', '$
         // Add css styling/properties to table
         $(table).addClass(scope.options.tableClass || 'rz-table');
 
-        // Initialise handlers, bindings and modes
-        initialiseAll(table, attr, scope);
+        $timeout(function () {
+            // Initialise handlers, bindings and modes
+            initialiseAll(table, attr, scope);
 
-        // Bind utility functions to scope object
-        bindUtilityFunctions(table, attr, scope)
+            // Bind utility functions to scope object
+            bindUtilityFunctions(table, attr, scope)
 
-        // Watch for changes in columns
-        watchTableChanges(table, attr, scope)
+            // Watch for changes in columns
+            watchTableChanges(table, attr, scope)
 
-        // Watch for scope bindings
-        setUpWatchers(table, attr, scope)
+            // Watch for scope bindings
+            setUpWatchers(table, attr, scope)
+        })
     }
 
     function renderWatch(table, attr, scope) {
@@ -271,7 +273,7 @@ angular.module("rzTable").directive('rzTable', ['resizeStorage', '$injector', '$
 
         if (!cache) cache = {};
         $(columns).each(function(index, column) {
-            var colScope = angular.element(column).scope()
+            var colScope = angular.element(column).scope() || {}
             var id = colScope.rzCol || $(column).attr('id')
             if (!id) return;
             cache[id] = resizer.saveAttr(column);
@@ -288,7 +290,7 @@ angular.module("rzTable").directive('rzTable', ['resizeStorage', '$injector', '$
         $(table).width('auto');
 
         ctrlColumns.each(function(index, column){
-            var colScope = angular.element(column).scope()
+            var colScope = angular.element(column).scope() || {}
             var id = colScope.rzCol || $(column).attr('id')
             var cacheWidth = cache[id];
             $(column).css({ width: cacheWidth });

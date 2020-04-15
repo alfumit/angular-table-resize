@@ -86,3 +86,6 @@ $RECYCLE.BIN/
 
 # Bower componenets
 bower_components
+
+#IDE
+./.idea
